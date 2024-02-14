@@ -41,7 +41,7 @@ func forEachFileChunk(
     chunksRead += 1
     body(data)
     if let reportProgress = reportProgress, (chunksRead - startChunksRead) * chunkSizeBytes > 1024 * 1024 * 100 {
-      let megabytesPerSecond = Double(chunksRead - startChunksRead) * 1e9 / Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds)
+      let megabytesPerSecond = Double((chunksRead - startChunksRead) * chunkSizeBytes) / 1024 / 1024 * 1e9 / Double(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds)
       let fraction = Double(chunksRead) / totalChunks
       reportProgress(fraction, megabytesPerSecond)
       start = DispatchTime.now()

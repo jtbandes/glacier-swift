@@ -4,7 +4,7 @@ import CommonCrypto
 // https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb
 func computeETag(
   at path: String,
-  chunkSizeMB: Int,
+  chunkSizeBytes: Int,
   reportProgress: ((_ fraction: Double, _ megabytesPerSecond: Double) -> Void)? = nil
 ) throws -> String
 {
@@ -12,7 +12,7 @@ func computeETag(
   var lastMD5: MD5?
   
   let combined = try MD5 { (update: ([UInt8]) -> Void) in
-    try forEachFileChunk(path, chunkSizeBytes: chunkSizeMB * 1024 * 1024, reportProgress: reportProgress) { data in
+    try forEachFileChunk(path, chunkSizeBytes: chunkSizeBytes, reportProgress: reportProgress) { data in
       let md5 = MD5(data)
       update(md5.data)
       lastMD5 = md5

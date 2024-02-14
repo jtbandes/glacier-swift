@@ -31,9 +31,10 @@ struct Treehash: ParsableCommand {
 struct Etag: ParsableCommand {
   @Argument var filePath: String
   @Option var chunkSizeMB = 8
+  @Option var chunkSizeBytes: Int?
 
   func run() throws {
-    let etag = try computeETag(at: filePath, chunkSizeMB: chunkSizeMB, reportProgress: reportProgress)
+    let etag = try computeETag(at: filePath, chunkSizeBytes: chunkSizeBytes ?? (chunkSizeMB * 1024 * 1024), reportProgress: reportProgress)
     print(etag)
   }
 }
