@@ -14,8 +14,29 @@ protocol DigestInfo {
   static var digestFinalFunc: (UnsafeMutablePointer<UInt8>?, UnsafeMutablePointer<Context>?) -> Int32 { get }
 }
 
-struct Digest<Info: DigestInfo> {
+protocol BaseDigest: CustomStringConvertible {
+  var data: [UInt8] { get }
+  var base64Description: String { get }
+  init(_ buffer: UnsafeRawBufferPointer)
+  init(_ array: [UInt8])
+  init(_ data: Data)
+  init(_ body: (_ update: (UnsafeRawBufferPointer) -> Void) throws -> Void) rethrows
+  init(_ body: (_ update: ([UInt8]) -> Void) throws -> Void) rethrows
+}
+
+struct Digest<Info: DigestInfo>: BaseDigest {
   var data = [UInt8](repeating: 0, count: Int(Info.digestLength))
+}
+
+typealias SHA1 = Digest<SHA1DigestInfo>
+extension CC_SHA1_CTX: DigestContext {}
+enum SHA1DigestInfo: DigestInfo {
+  typealias Context = CC_SHA1_CTX
+  static var digestLength = CC_SHA1_DIGEST_LENGTH
+  static var digestFunc = CC_SHA1
+  static var digestInitFunc = CC_SHA1_Init
+  static var digestUpdateFunc = CC_SHA1_Update
+  static var digestFinalFunc = CC_SHA1_Final
 }
 
 typealias SHA256 = Digest<SHA256DigestInfo>
@@ -93,5 +114,9 @@ extension Digest: CustomStringConvertible {
       }
       return data.count * 2
     }
+  }
+
+  var base64Description: String {
+    return Data(data).base64EncodedString()
   }
 }

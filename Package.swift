@@ -10,7 +10,7 @@ let package = Package(
     .executable(name: "glacier", targets: ["glacier"]),
   ],
   dependencies: [
-     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "0.3.1"),
+     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0"),
   ],
   targets: [
     .target(
